@@ -41,13 +41,8 @@ export async function proxy(request: NextRequest) {
 
   // If logged in and on /login, redirect based on role
   if (isLoginPage && user) {
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", user.id)
-      .single();
-
-    if (profile?.role === "admin") {
+    const role = user.app_metadata?.role;
+    if (role === "admin") {
       return NextResponse.redirect(new URL("/admin", request.url));
     } else {
       return NextResponse.redirect(new URL("/cliente", request.url));

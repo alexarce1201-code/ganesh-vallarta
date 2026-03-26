@@ -16,14 +16,8 @@ export default async function ClienteLayout({
 
   if (!user) redirect("/login");
 
-  // Verify role
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .single();
-
-  if (!profile || profile.role !== "cliente") redirect("/login");
+  const role = user.app_metadata?.role;
+  if (role !== "cliente") redirect("/login");
 
   return (
     <div className="min-h-screen bg-bg">

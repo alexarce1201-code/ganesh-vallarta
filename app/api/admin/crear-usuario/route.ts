@@ -19,6 +19,7 @@ export async function POST(request: NextRequest) {
       email,
       password,
       email_confirm: true,
+      app_metadata: { role: "cliente" },
     });
 
     if (authError) {

@@ -28,16 +28,11 @@ export default function LoginPage() {
       return;
     }
 
-    // Fetch role to decide where to redirect
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", data.user.id)
-      .single();
+    const role = data.user.app_metadata?.role;
 
     router.refresh();
 
-    if (profile?.role === "admin") {
+    if (role === "admin") {
       router.push("/admin");
     } else {
       router.push("/cliente");
