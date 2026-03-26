@@ -5,10 +5,10 @@ import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
+  const [email, setEmail]       = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [error, setError]       = useState("");
+  const [loading, setLoading]   = useState(false);
   const router = useRouter();
 
   async function handleLogin(e: React.FormEvent) {
@@ -17,14 +17,30 @@ export default function LoginPage() {
     setError("");
 
     const supabase = createClient();
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error: signInError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-    if (error) {
+    if (signInError || !data.user) {
       setError("Credenciales incorrectas. Intenta de nuevo.");
       setLoading(false);
-    } else {
+      return;
+    }
+
+    // Fetch role to decide where to redirect
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", data.user.id)
+      .single();
+
+    router.refresh();
+
+    if (profile?.role === "admin") {
       router.push("/admin");
-      router.refresh();
+    } else {
+      router.push("/cliente");
     }
   }
 
@@ -39,7 +55,7 @@ export default function LoginPage() {
           <h1 className="font-display font-black text-3xl tracking-tight text-text mb-1">
             Oscar <span className="text-accent">Salcedo</span>
           </h1>
-          <p className="text-muted text-sm">Panel de administración</p>
+          <p className="text-muted text-sm">Plataforma de entrenamiento</p>
         </div>
 
         {/* Form */}
@@ -52,7 +68,7 @@ export default function LoginPage() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="oscar@ejemplo.com"
+              placeholder="tu@correo.com"
               required
               className="w-full bg-surface border border-[rgba(255,255,255,0.08)] rounded-xl px-4 py-3 text-text text-sm outline-none focus:border-accent transition-colors"
             />

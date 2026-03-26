@@ -27,22 +27,24 @@ export default function ClienteForm({ cliente }: { cliente?: ClienteData }) {
   const supabase = createClient();
 
   const [form, setForm] = useState({
-    nombre: cliente?.nombre ?? "",
-    edad: cliente?.edad ?? "",
-    altura: cliente?.altura ?? "",
+    nombre:      cliente?.nombre      ?? "",
+    edad:        cliente?.edad        ?? "",
+    altura:      cliente?.altura      ?? "",
     peso_inicial: cliente?.peso_inicial ?? "",
-    peso_meta: cliente?.peso_meta ?? "",
-    objetivo: cliente?.objetivo ?? "",
+    peso_meta:   cliente?.peso_meta   ?? "",
+    objetivo:    cliente?.objetivo    ?? "",
     condiciones: cliente?.condiciones ?? "",
     fecha_inicio: cliente?.fecha_inicio ?? new Date().toISOString().split("T")[0],
-    contacto: cliente?.contacto ?? "",
-    tipo: cliente?.tipo ?? "grupal",
+    contacto:    cliente?.contacto    ?? "",
+    tipo:        cliente?.tipo        ?? "grupal",
   });
 
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  // Auth credentials — only shown on create
+  const [email, setEmail]       = useState("");
+  const [password, setPassword] = useState("");
 
-  const precio = form.tipo === "individual" ? PRECIO_INDIVIDUAL : PRECIO_GRUPAL;
+  const [loading, setLoading] = useState(false);
+  const [error, setError]     = useState("");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -50,18 +52,18 @@ export default function ClienteForm({ cliente }: { cliente?: ClienteData }) {
     setError("");
 
     const payload = {
-      nombre: form.nombre.trim(),
-      edad: form.edad ? Number(form.edad) : null,
-      altura: form.altura ? Number(form.altura) : null,
+      nombre:       form.nombre.trim(),
+      edad:         form.edad        ? Number(form.edad)        : null,
+      altura:       form.altura      ? Number(form.altura)      : null,
       peso_inicial: form.peso_inicial ? Number(form.peso_inicial) : null,
-      peso_actual: form.peso_inicial ? Number(form.peso_inicial) : null,
-      peso_meta: form.peso_meta ? Number(form.peso_meta) : null,
-      objetivo: form.objetivo || null,
-      condiciones: form.condiciones || null,
+      peso_actual:  form.peso_inicial ? Number(form.peso_inicial) : null,
+      peso_meta:    form.peso_meta   ? Number(form.peso_meta)   : null,
+      objetivo:     form.objetivo    || null,
+      condiciones:  form.condiciones || null,
       fecha_inicio: form.fecha_inicio || null,
-      contacto: form.contacto || null,
-      tipo: form.tipo,
-      activo: true,
+      contacto:     form.contacto    || null,
+      tipo:         form.tipo,
+      activo:       true,
     };
 
     if (isEdit) {
@@ -82,12 +84,30 @@ export default function ClienteForm({ cliente }: { cliente?: ClienteData }) {
         setLoading(false);
         return;
       }
-      const { data, error } = await supabase
+
+      const { data, error: insertError } = await supabase
         .from("clientes")
         .insert(payload)
         .select("id")
         .single();
-      if (error) { setError(error.message); setLoading(false); return; }
+      if (insertError) { setError(insertError.message); setLoading(false); return; }
+
+      // If email + password provided, create auth user
+      if (email.trim() && password.trim()) {
+        const res = await fetch("/api/admin/crear-usuario", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: email.trim(), password, cliente_id: data.id }),
+        });
+        const json = await res.json();
+        if (!res.ok || json.error) {
+          setError(`Cliente creado, pero error al crear acceso: ${json.error ?? "Error desconocido"}`);
+          setLoading(false);
+          router.push(`/admin/clientes/${data.id}`);
+          return;
+        }
+      }
+
       router.push(`/admin/clientes/${data.id}`);
     }
 
@@ -125,7 +145,9 @@ export default function ClienteForm({ cliente }: { cliente?: ClienteData }) {
                   : "bg-surface2 text-muted border-[rgba(255,255,255,0.08)] hover:border-accent/40"
               }`}
             >
-              {t === "grupal" ? `Grupal — $${PRECIO_GRUPAL}/mes` : `Individual — $${PRECIO_INDIVIDUAL}/mes`}
+              {t === "grupal"
+                ? `Grupal — $${PRECIO_GRUPAL}/mes`
+                : `Individual — $${PRECIO_INDIVIDUAL}/mes`}
             </button>
           ))}
         </div>
@@ -207,6 +229,38 @@ export default function ClienteForm({ cliente }: { cliente?: ClienteData }) {
           />
         </Field>
       </div>
+
+      {/* Auth credentials — only shown when creating a new client */}
+      {!isEdit && (
+        <div className="border border-[rgba(255,255,255,0.08)] rounded-2xl p-4 space-y-4">
+          <p className="text-xs font-display font-semibold uppercase tracking-widest text-muted">
+            Acceso al portal del cliente <span className="text-green ml-1">(opcional)</span>
+          </p>
+          <div className="grid grid-cols-1 gap-4">
+            <Field label="Correo electrónico">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="cliente@correo.com"
+                className={inputCls}
+              />
+            </Field>
+            <Field label="Contraseña temporal">
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Mínimo 8 caracteres"
+                className={inputCls}
+              />
+            </Field>
+          </div>
+          <p className="text-xs text-muted">
+            Si dejas estos campos en blanco, el cliente no tendrá acceso al portal por ahora.
+          </p>
+        </div>
+      )}
 
       {error && (
         <p className="text-accent text-sm bg-accent/10 border border-accent/20 rounded-xl px-4 py-2">
