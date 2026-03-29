@@ -25,7 +25,7 @@ export default function LandingPage() {
       {/* HERO */}
       <section className="relative min-h-screen flex items-center">
         <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-black/40" />
-        <div className="absolute inset-0 bg-[url('/hero-bg.jpeg')] bg-cover bg-center opacity-40" />
+        <div className="absolute inset-0 bg-[url('/hero-bg.jpeg')] bg-cover bg-[center_top_20%] opacity-40" />
         <div className="relative z-10 max-w-6xl mx-auto px-6 w-full pt-24 pb-16">
           <div className="max-w-lg ml-auto">
             <p className="text-[10px] tracking-[0.3em] text-red-500 uppercase mb-6 flex items-center gap-2">
@@ -57,7 +57,7 @@ export default function LandingPage() {
             {/* Stats */}
             <div className="flex gap-12 mt-16 pt-8 border-t border-white/10">
               <div>
-                <p className="text-3xl font-black text-red-500">45'</p>
+                <p className="text-3xl font-black text-red-500">45 min</p>
                 <p className="text-[10px] tracking-widest text-white/40 uppercase mt-1">Por sesión</p>
               </div>
               <div>
