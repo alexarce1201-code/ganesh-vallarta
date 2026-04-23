@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Syne, DM_Sans, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 
@@ -23,6 +23,20 @@ const spaceGrotesk = Space_Grotesk({
 export const metadata: Metadata = {
   title: "Oscar Salcedo | Coach",
   description: "Plataforma de entrenamiento personalizado",
+  appleWebApp: {
+    capable: true,
+    title: "Oscar Salcedo",
+    statusBarStyle: "black-translucent",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0a0a0a",
+  colorScheme: "dark",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 export default function RootLayout({
