@@ -1,17 +1,18 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
 const NAV = [
   { href: "/admin",          label: "Dashboard",  icon: "▣" },
-  { href: "/admin/clientes", label: "Clientes",   icon: "◎" },
+  { href: "/admin/clientes", label: "Miembros",   icon: "◎" },
+  { href: "/admin/wod",      label: "WOD",        icon: "◆" },
   { href: "/admin/horarios", label: "Horarios",   icon: "◫" },
-  { href: "/admin/dietas",   label: "Dietas",     icon: "◈" },
-  { href: "/admin/progreso", label: "Progreso",   icon: "◆" },
-  { href: "/admin/mensajes", label: "Mensajes",   icon: "◉" },
   { href: "/admin/pagos",    label: "Pagos",      icon: "◐" },
+  { href: "/admin/dietas",   label: "Dietas",     icon: "◈" },
+  { href: "/admin/progreso", label: "Progreso",   icon: "◉" },
 ];
 
 export default function Sidebar() {
@@ -36,10 +37,13 @@ export default function Sidebar() {
       <aside className="hidden lg:flex flex-col w-56 min-h-screen bg-surface border-r border-[rgba(255,255,255,0.08)] fixed left-0 top-0 bottom-0 z-40">
         {/* Brand */}
         <div className="px-5 py-6 border-b border-[rgba(255,255,255,0.08)]">
-          <div className="font-display font-black text-xl tracking-tight">
-            Oscar <span className="text-accent">Salcedo</span>
+          <div className="flex items-center gap-2.5 mb-1">
+            <Image src="/logo-ganesh.png" alt="Ganesh Vallarta" width={32} height={32} className="rounded-full" />
+            <div className="font-display font-black text-xl tracking-tight leading-none">
+              Ganesh <span className="text-accent">Vta</span>
+            </div>
           </div>
-          <div className="text-xs text-muted mt-0.5 font-display uppercase tracking-widest">
+          <div className="text-xs text-muted font-display uppercase tracking-widest">
             Admin
           </div>
         </div>

@@ -2,9 +2,9 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Oscar Salcedo | Coach",
-    short_name: "Oscar Salcedo",
-    description: "Plataforma de entrenamiento personalizado con Oscar Salcedo",
+    name: "Ganesh Vallarta | Centro de Entrenamiento Funcional",
+    short_name: "Ganesh Vallarta",
+    description: "CrossFit y entrenamiento funcional en Puerto Vallarta",
     start_url: "/",
     display: "standalone",
     orientation: "portrait",

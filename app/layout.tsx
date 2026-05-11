@@ -1,31 +1,19 @@
 import type { Metadata, Viewport } from "next";
-import { Syne, DM_Sans, Space_Grotesk } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 
-const syne = Syne({
-  variable: "--font-syne",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-});
-
-const dmSans = DM_Sans({
-  variable: "--font-dm-sans",
-  subsets: ["latin"],
-  weight: ["300", "400", "500"],
-});
-
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space-grotesk",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
 });
 
 export const metadata: Metadata = {
-  title: "Oscar Salcedo | Coach",
-  description: "Plataforma de entrenamiento personalizado",
+  title: "Ganesh Vallarta | Centro de Entrenamiento Funcional",
+  description: "CrossFit y entrenamiento funcional en Puerto Vallarta",
   appleWebApp: {
     capable: true,
-    title: "Oscar Salcedo",
+    title: "Ganesh Vallarta",
     statusBarStyle: "black-translucent",
   },
 };
@@ -47,7 +35,7 @@ export default function RootLayout({
   return (
     <html
       lang="es"
-      className={`${syne.variable} ${dmSans.variable} ${spaceGrotesk.variable} h-full`}
+      className={`${inter.variable} h-full`}
     >
       <body className="min-h-full bg-bg text-text font-body">{children}</body>
     </html>

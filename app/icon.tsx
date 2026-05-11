@@ -20,8 +20,8 @@ export default function Icon() {
           fontFamily: "sans-serif",
         }}
       >
-        <span style={{ color: "#f0f0f0" }}>O</span>
-        <span style={{ color: "#e63946" }}>S</span>
+        <span style={{ color: "#f0f0f0" }}>G</span>
+        <span style={{ color: "#e0395a" }}>V</span>
       </div>
     ),
     { ...size }

@@ -7,18 +7,18 @@ export default async function PagosPage() {
   const mesActual = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-01`;
 
   const [clientesRes, pagosRes] = await Promise.all([
-    supabase.from("clientes").select("id, nombre, tipo").eq("activo", true).order("nombre"),
+    supabase.from("clientes").select("id, nombre, monto_mensual").eq("activo", true).order("nombre"),
     supabase
       .from("pagos")
-      .select("id, cliente_id, monto, estado, tipo, mes")
+      .select("id, cliente_id, monto, estado, mes")
       .eq("mes", mesActual),
   ]);
 
   return (
     <div>
       <div className="mb-8">
-        <p className="text-xs font-display uppercase tracking-widest text-muted mb-1">Administración</p>
-        <h1 className="font-display font-black text-3xl tracking-tight">Pagos</h1>
+        <p className="text-xs uppercase tracking-widest text-muted mb-1">Administración</p>
+        <h1 className="font-black text-3xl tracking-tight">Pagos</h1>
         <p className="text-sm text-muted mt-1">
           {now.toLocaleDateString("es-MX", { month: "long", year: "numeric" })}
         </p>

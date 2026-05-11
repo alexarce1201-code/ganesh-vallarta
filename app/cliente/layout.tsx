@@ -19,15 +19,19 @@ export default async function ClienteLayout({
   const role = user.app_metadata?.role;
   if (role !== "cliente") redirect("/login");
 
+  // Lookup cliente para saber si tiene coaching personalizado
+  const { data: cliente } = await supabase
+    .from("clientes")
+    .select("coaching_extra")
+    .eq("auth_user_id", user.id)
+    .maybeSingle();
+
   return (
     <div className="min-h-screen bg-bg">
-      {/* Scrollable content — padded bottom so it clears the fixed nav */}
       <main className="pb-24 max-w-[480px] mx-auto px-4 pt-6">
         {children}
       </main>
-
-      {/* Fixed bottom navigation */}
-      <BottomNav />
+      <BottomNav coachingExtra={cliente?.coaching_extra ?? false} />
     </div>
   );
 }

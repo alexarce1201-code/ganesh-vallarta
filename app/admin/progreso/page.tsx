@@ -7,21 +7,27 @@ export default async function ProgresoPage() {
     .from("clientes")
     .select("id, nombre, peso_inicial, peso_actual, peso_meta")
     .eq("activo", true)
+    .eq("coaching_extra", true)
     .order("nombre");
 
   return (
     <div>
       <div className="mb-8">
-        <p className="text-xs font-display uppercase tracking-widest text-muted mb-1">Administración</p>
-        <h1 className="font-display font-black text-3xl tracking-tight">Progreso</h1>
+        <p className="text-xs uppercase tracking-widest text-muted mb-1">Coaching personalizado</p>
+        <h1 className="font-black text-3xl tracking-tight">Progreso</h1>
+        <p className="text-sm text-muted mt-1">
+          Solo aparecen miembros con coaching personalizado contratado.
+        </p>
       </div>
 
       <div className="bg-surface border border-[rgba(255,255,255,0.08)] rounded-2xl overflow-hidden">
         <div className="px-5 py-4 border-b border-[rgba(255,255,255,0.08)]">
-          <p className="text-xs font-display uppercase tracking-widest text-muted">Selecciona un cliente</p>
+          <p className="text-xs uppercase tracking-widest text-muted">Selecciona un miembro</p>
         </div>
         {!clientes?.length ? (
-          <div className="px-5 py-8 text-center text-muted text-sm">Sin clientes activos.</div>
+          <div className="px-5 py-8 text-center text-muted text-sm">
+            Ningún miembro tiene coaching personalizado activo.
+          </div>
         ) : (
           <div className="divide-y divide-[rgba(255,255,255,0.05)]">
             {clientes.map((c) => {

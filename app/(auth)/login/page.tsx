@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 
@@ -44,13 +45,13 @@ export default function LoginPage() {
       <div className="w-full max-w-sm">
         {/* Logo / Header */}
         <div className="text-center mb-10">
-          <div className="inline-block bg-accent/10 border border-accent/30 rounded-2xl px-5 py-3 mb-6">
-            <span className="font-display font-black text-accent text-xl tracking-tight">OS</span>
+          <div className="inline-block mb-6">
+            <Image src="/logo-ganesh.png" alt="Ganesh Vallarta" width={120} height={120} className="rounded-full" priority />
           </div>
           <h1 className="font-display font-black text-3xl tracking-tight text-text mb-1">
-            Oscar <span className="text-accent">Salcedo</span>
+            Ganesh <span className="text-accent">Vallarta</span>
           </h1>
-          <p className="text-muted text-sm">Plataforma de entrenamiento</p>
+          <p className="text-muted text-sm">Centro de Entrenamiento Funcional</p>
         </div>
 
         {/* Form */}

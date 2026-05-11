@@ -1,45 +1,48 @@
 import { createClient } from "@/lib/supabase/server";
-import WeeklyCalendar from "@/components/admin/WeeklyCalendar";
+import HorariosAdmin from "@/components/admin/HorariosAdmin";
 
-function getMondayOfWeek(d: Date): string {
-  const day = d.getDay();
-  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
-  const monday = new Date(d);
-  monday.setDate(diff);
-  return monday.toISOString().split("T")[0];
+export const dynamic = "force-dynamic";
+
+function getNext14Weekdays(): string[] {
+  const out: string[] = [];
+  const d = new Date();
+  while (out.length < 14) {
+    const dow = d.getDay(); // 0=Sun..6=Sat
+    if (dow >= 1 && dow <= 5) {
+      out.push(d.toISOString().split("T")[0]);
+    }
+    d.setDate(d.getDate() + 1);
+  }
+  return out;
 }
 
-export default async function HorariosPage() {
+export default async function HorariosPage(props: { searchParams: Promise<{ fecha?: string }> }) {
+  const params = await props.searchParams;
   const supabase = await createClient();
-  const semanaInicio = getMondayOfWeek(new Date());
 
-  const [slotsRes, asignRes, clientesRes] = await Promise.all([
-    supabase.from("slots").select("*").order("dia").order("hora_inicio"),
+  const fechas = getNext14Weekdays();
+  const fecha = params.fecha && fechas.includes(params.fecha) ? params.fecha : fechas[0];
+
+  const [slotsRes, reservasRes] = await Promise.all([
+    supabase.from("slots").select("*").eq("activo", true).order("orden"),
     supabase
-      .from("asignaciones")
-      .select("id, slot_id, cliente_id, cliente:clientes(nombre)")
-      .eq("semana_inicio", semanaInicio),
-    supabase.from("clientes").select("id, nombre").eq("activo", true).order("nombre"),
+      .from("reservas")
+      .select("id, slot_id, cliente:clientes(id, nombre)")
+      .eq("fecha", fecha),
   ]);
 
-  // Normalize cliente relation (Supabase may return array or object)
-  const asignaciones = (asignRes.data ?? []).map((a) => ({
-    ...a,
-    cliente: Array.isArray(a.cliente) ? (a.cliente[0] ?? null) : a.cliente,
+  const reservas = (reservasRes.data ?? []).map((r) => ({
+    id: r.id,
+    slot_id: r.slot_id,
+    cliente: Array.isArray(r.cliente) ? (r.cliente[0] ?? null) : r.cliente,
   }));
 
   return (
-    <div>
-      <div className="mb-8">
-        <p className="text-xs font-display uppercase tracking-widest text-muted mb-1">Administración</p>
-        <h1 className="font-display font-black text-3xl tracking-tight">Horarios</h1>
-      </div>
-      <WeeklyCalendar
-        slots={slotsRes.data ?? []}
-        asignaciones={asignaciones}
-        clientes={clientesRes.data ?? []}
-        semanaInicio={semanaInicio}
-      />
-    </div>
+    <HorariosAdmin
+      slots={slotsRes.data ?? []}
+      reservas={reservas}
+      fechaSeleccionada={fecha}
+      fechasDisponibles={fechas}
+    />
   );
 }
